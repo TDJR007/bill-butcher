@@ -87,7 +87,6 @@
 bill-butcher-rag/
 ├── main.py                 # FastAPI application entry point
 ├── requirements.txt        # Python dependencies
-├── SampleElectricBill.pdf  # Test file
 ├── data/                   # Document storage
 ├── rag/                    # RAG pipeline modules
 │   ├── embedder.py        # Document embedding logic
