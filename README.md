@@ -1,6 +1,6 @@
 # Bill Butcher RAG 💸
 
-**Bill Butcher** is a RAG (Retrieval-Augmented Generation) application that analyzes your bills and invoices with the brutal honesty and colorful language of Billy Butcher from *The Boys*. Upload your electric bill, and watch Billy tear it apart with his signature wit while actually helping you understand what you're paying for.
+**Bill Butcher** is a RAG (Retrieval-Augmented Generation) application that analyzes your bills and invoices with the brutal honesty and colorful language of Billy Butcher from *The Boys*. Upload your bills/invoices, and watch Billy tear it apart with his signature wit while actually helping you understand what you're paying for.
 
 ## 🎯 What It Does
 
