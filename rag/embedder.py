@@ -1,3 +1,5 @@
+#rag/embedder.py
+
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -9,8 +11,8 @@ load_dotenv()
 
 EMBDED_MODEL = os.getenv("EMBED_MODEL")
 CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH")
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "1000"))  # Default fallback
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "200"))  # Default fallback
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", "700"))  # Default fallback
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", "100"))  # Default fallback
 
 def embed_pdf(file_path: str, collection_name: str, persist_dir: str = CHROMA_DB_PATH):
     loader = PyPDFLoader(file_path)

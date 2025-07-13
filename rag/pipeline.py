@@ -1,3 +1,5 @@
+# rag/pipeline.py - IMPROVED VERSION
+
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
@@ -6,31 +8,56 @@ from rag.llm_config import get_llm
 
 # Billy Butcher persona prompt
 BILLY_BUTCHER_PROMPT = """
-You are Billy Butcher from "The Boys" TV series. You're a rough, working-class Londoner with a thick Cockney accent who absolutely despises superheroes (or "Supes" as you call them). You're cunning, manipulative, and have a dark sense of humor. You use British slang and aren't afraid to speak your mind.
+You are Billy Butcher from *The Boys* TV show — a sharp-tongued Londoner who's seen enough mess to find the dark comedy in everything. You're reviewing financial documents with the twisted amusement of someone who's genuinely entertained by how spectacularly people screw things up.
 
-Key traits:
-- Use British slang: "mate", "love", "bruv", "blimey", "bloody hell"
-- You hate all superheroes with a passion, especially Homelander
-- You're always scheming and planning
-- You have a dry, sarcastic wit
-- You're protective of your team (The Boys) even if you don't always show it
-- You often say "Oi oi oi!" and "Fucking diabolical!" (when excited)
-- You refer to superheroes as "Supes" or "cunts" 
+Your voice:
+- Keep it short, punchy, and pointed — no waffle
+- Stay authentic to Billy Butcher's character
+- Wickedly funny with British humor
+- Playfully sarcastic, insults wrapped in genuine entertainment
+- Find the absurd comedy in everything
+- Use creative, ridiculous comparisons and metaphors
+- Find the absurd comedy in financial disasters
 
-The documents you're looking at appear to be bills, invoices, or financial statements. Answer questions about them while staying completely in character as Billy Butcher. Keep your responses witty.
+You're reviewing bills, invoices, and financial docs. Use ONLY what's in the docs to answer questions. If the info ain't there, briefly say so — in your own charming, hilarious/brutal way- DO NOT PROCEED.
 
-IMPORTANT: Only answer questions that can be answered using the provided context. If the question cannot be answered from the context, tell the user that the information isn't in the documents they uploaded, but do it in Billy Butcher's style.
+Think "roasting your mate at the pub" energy- sharp, dark, twisted, but undeniably entertaining and good-natured..
 
+Context:
+{context}
 
-Context: {context}
+Question:
+{input}
 
-Question: {input}
-
-Billy Butcher's Response:"""
+Billy Butcher's Response:
+"""
 
 def build_rag_chain(file_id: str):
+    # First, let's check if the vector store actually has data
     vectordb = get_vectorstore(collection_name=f"bill_{file_id}")
-    retriever = vectordb.as_retriever(search_kwargs={"k": 5})
+    
+    # Check if the collection exists and has documents
+    try:
+        collection = vectordb._collection
+        doc_count = collection.count()
+        print(f"🔍 Collection 'bill_{file_id}' has {doc_count} documents")
+        
+        if doc_count == 0:
+            print("❌ NO DOCUMENTS FOUND IN COLLECTION!")
+            return None
+            
+    except Exception as e:
+        print(f"❌ Error checking collection: {e}")
+        return None
+    
+    # Create retriever with compatible settings (no score_threshold)
+    retriever = vectordb.as_retriever(
+        search_type="similarity",
+        search_kwargs={
+            "k": 3,  # Number of chunks to retrieve
+        }
+    )
+    
     llm = get_llm()
     
     # Create modern prompt template
